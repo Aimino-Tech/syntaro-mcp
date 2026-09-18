@@ -1,0 +1,102 @@
+{
+  "$schema": "https://claude.ai/plugins/schema/marketplace.json",
+  "name": "syntaro",
+  "title": "SYNTARO",
+  "description": "Submit GitHub issue descriptions and get automated fix PRs. SYNTARO investigates your codebase, writes fixes, runs tests, and opens pull requests \u2014 all through natural language.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Aimino Tech",
+    "url": "https://github.com/Aimino-Tech"
+  },
+  "license": "AGPL-3.0-only",
+  "homepage": "https://syntaro.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aimino-Tech/syntaro-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/Aimino-Tech/syntaro-mcp/issues"
+  },
+  "categories": [
+    "developer-tools",
+    "automation",
+    "github",
+    "code-review",
+    "productivity"
+  ],
+  "tags": [
+    "github",
+    "automation",
+    "fix",
+    "pr",
+    "code-review",
+    "testing",
+    "mcp",
+    "opencode",
+    "claude"
+  ],
+  "skills": [
+    "skills/automation-testing/SKILL.md",
+    "skills/cavecrew/SKILL.md",
+    "skills/caveman/SKILL.md",
+    "skills/ponytail/SKILL.md",
+    "skills/syntaro/SKILL.md"
+  ],
+  "mcpServers": {
+    "syntaro": {
+      "description": "SYNTARO MCP server \u2014 submit fix requests, check status, list repos",
+      "command": "python3",
+      "args": [
+        "-m",
+        "syntaro_mcp.server",
+        "stdio"
+      ]
+    }
+  },
+  "resources": {
+    "syntaro://runs/{run_id}": {
+      "name": "Fix Run Status",
+      "description": "Full run details including status, timestamps, issue info, and PR link",
+      "mimeType": "application/json"
+    },
+    "syntaro://issues/{issue_id}": {
+      "name": "Issue Fix Status",
+      "description": "Issue details with current fix status, run history, and linked PRs",
+      "mimeType": "application/json"
+    }
+  },
+  "config": {
+    "env": {
+      "MCP_API_KEY": {
+        "description": "API key for MCP authentication",
+        "required": false,
+        "default": ""
+      },
+      "SYNTARO_MCP_PORT": {
+        "description": "MCP server port (SSE mode)",
+        "default": "4095"
+      },
+      "SYNTARO_MCP_TRANSPORT": {
+        "description": "Transport mode: stdio or sse",
+        "default": "stdio"
+      }
+    }
+  },
+  "installation": {
+    "opencode": {
+      "configPath": "opencode.json",
+      "section": "mcpServers"
+    },
+    "claudeDesktop": {
+      "configPath": "claude_desktop_config.json",
+      "section": "mcpServers"
+    },
+    "cursor": {
+      "type": "command",
+      "config": {
+        "name": "syntaro",
+        "command": "python3 -m syntaro_mcp.server stdio"
+      }
+    }
+  }
+}

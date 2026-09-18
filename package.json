@@ -1,0 +1,41 @@
+{
+  "name": "@aimino/syntaro-mcp",
+  "version": "1.1.0",
+  "description": "MCP server for SYNTARO. Let agents (opencode, Claude, ...) dispatch fixes, check Linear tickets, read/write agent memory, post to Slack, and resume sessions.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "bin": {
+    "syntaro-mcp": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "syntaro_mcp/",
+    "workers/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aimino-Tech/syntaro-mcp.git"
+  },
+  "homepage": "https://github.com/Aimino-Tech/syntaro-mcp",
+  "bugs": {
+    "url": "https://github.com/Aimino-Tech/syntaro-mcp/issues"
+  },
+  "keywords": [
+    "syntaro",
+    "mcp",
+    "model-context-protocol",
+    "github-bot",
+    "issue-fixer",
+    "automated-fix",
+    "opencode",
+    "agent",
+    "ai",
+    "linear",
+    "slack"
+  ]
+}

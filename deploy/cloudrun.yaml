@@ -1,0 +1,52 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: syntaro-mcp
+  labels:
+    app: syntaro-mcp
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "3"
+    spec:
+      containers:
+        - image: REGION-docker.pkg.dev/PROJECT_ID/syntaro/syntaro-mcp:v1.1.0
+          ports:
+            - containerPort: 4095
+          env:
+            - name: SYNTARO_API_URL
+              value: https://api.syntaro.io
+            - name: SYNTARO_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: syntaro-mcp-secrets
+                  key: syntaro-api-key
+            - name: MCP_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: syntaro-mcp-secrets
+                  key: mcp-api-key
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: syntaro-mcp-secrets
+                  key: github-token
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4095
+            periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4095
+            periodSeconds: 60
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+  traffic:
+    - percent: 100
+      latestRevision: true

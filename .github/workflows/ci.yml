@@ -1,0 +1,60 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  mcp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+      - name: Byte-compile server
+        run: python -m py_compile syntaro_mcp/server.py syntaro_mcp/handlers.py syntaro_mcp/agent_handlers.py workers/pipeline_client.py
+      - name: No leaked secrets
+        run: |
+          ! grep -rniE "sk-|ghp_|gho_|xoxb-|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY|AKIA[0-9A-Z]{16}" \
+            syntaro_mcp workers skills server.json .mcp.json smithery.yaml || exit 1
+      - name: Manifest versions in sync
+        run: |
+          node -e "
+            const pkg=require('./package.json').version;
+            const srv=require('./server.json').version;
+            const mcp=require('./.mcp.json').server.version;
+            const fs=require('fs');
+            const sm=fs.readFileSync('smithery.yaml','utf8').match(/^version:\s*\"?([^\"\s]+)\"?/m)[1];
+            for (const [f,v] of [['server.json',srv],['.mcp.json',mcp],['smithery.yaml',sm]])
+              if (v!==pkg) { console.error(f+' version '+v+' != package.json '+pkg); process.exit(1); }
+            console.log('versions in sync:', pkg);
+          "
+      - name: Skills licensed + registered
+        run: |
+          node -e "
+            const fs=require('fs');
+            const mp=JSON.parse(fs.readFileSync('.claude-plugin/marketplace.json','utf8'));
+            const dirs=fs.readdirSync('skills',{withFileTypes:true}).filter(d=>d.isDirectory()).map(d=>d.name);
+            const listed=mp.skills.map(s=>s.split('/')[1]).sort();
+            if (JSON.stringify(listed)!==JSON.stringify([...dirs].sort())) { console.error('marketplace skills != skills/:', listed, dirs); process.exit(1); }
+            for (const d of dirs) {
+              const lic=fs.readFileSync('skills/'+d+'/SKILL.md','utf8').match(/^license:\s*(.+?)\s*$/m)?.[1].trim();
+              if (lic!=='AGPL-3.0-only') { console.error(d+' license: '+lic); process.exit(1); }
+            }
+            console.log('skills ok:', dirs.join(','));
+          "
+      - name: SSE boots + /health answers
+        run: |
+          python -m syntaro_mcp.server sse --port 4095 &
+          SRV=$!
+          for i in $(seq 1 20); do curl -sf localhost:4095/health && break || sleep 1; done
+          curl -sf localhost:4095/health | grep -q '"status":"ok"'
+          kill $SRV
+      - name: npm wrapper syntax
+        run: node --check index.js

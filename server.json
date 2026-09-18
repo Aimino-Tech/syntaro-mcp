@@ -1,0 +1,214 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/registry/main/schemas/server.json",
+  "name": "@aimino/syntaro-mcp",
+  "mcpName": "syntaro-agent-discovery",
+  "version": "1.1.0",
+  "description": "MCP server for SYNTARO. Submit GitHub issues, list runs, search codebase, and get automated fix PRs via OpenCode agents.",
+  "author": {
+    "name": "Aimino",
+    "url": "https://github.com/Aimino-Tech"
+  },
+  "homepage": "https://syntaro.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aimino-Tech/syntaro-mcp.git"
+  },
+  "license": "AGPL-3.0-only",
+  "categories": [
+    "developer-tools",
+    "code-quality",
+    "automation"
+  ],
+  "tags": [
+    "github",
+    "issues",
+    "automation",
+    "fix",
+    "pr",
+    "mcp",
+    "agent"
+  ],
+  "capabilities": {
+    "tools": {
+      "syntaro_label_issue": {
+        "name": "syntaro_label_issue",
+        "description": "Label a GitHub issue with the SYNTARO fix label (or custom label).",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "owner": {
+              "type": "string",
+              "description": "Repository owner (user or org)"
+            },
+            "repo": {
+              "type": "string",
+              "description": "Repository name"
+            },
+            "issue_number": {
+              "type": "integer",
+              "description": "Issue number"
+            },
+            "label": {
+              "type": "string",
+              "description": "Label to apply (default: syntaro:fix)"
+            }
+          },
+          "required": [
+            "owner",
+            "repo",
+            "issue_number"
+          ]
+        }
+      },
+      "syntaro_run_fix": {
+        "name": "syntaro_run_fix",
+        "description": "Trigger the SYNTARO fix pipeline for a GitHub issue URL.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "issue_url": {
+              "type": "string",
+              "description": "Full GitHub issue URL"
+            }
+          },
+          "required": [
+            "issue_url"
+          ]
+        }
+      },
+      "syntaro_check_status": {
+        "name": "syntaro_check_status",
+        "description": "Check the current status of a SYNTARO fix run by run_id.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "run_id": {
+              "type": "string",
+              "description": "Run ID from syntaro_run_fix"
+            }
+          },
+          "required": [
+            "run_id"
+          ]
+        }
+      },
+      "syntaro_get_pr": {
+        "name": "syntaro_get_pr",
+        "description": "Get the pull request URL and details for a completed SYNTARO fix run.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "run_id": {
+              "type": "string",
+              "description": "Run ID from syntaro_run_fix"
+            }
+          },
+          "required": [
+            "run_id"
+          ]
+        }
+      },
+      "list_issues": {
+        "name": "list_issues",
+        "description": "List tracked issues with their SYNTARO fix status, with optional filters.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "repo": {
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "search_codebase": {
+        "name": "search_codebase",
+        "description": "Search the SYNTARO codebase for symbols, files, or patterns.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "repo": {
+              "type": "string"
+            },
+            "max_results": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    "resources": {
+      "syntaro://runs/{run_id}": {
+        "name": "Fix Run Status",
+        "description": "Real-time status and PR link for a SYNTARO fix run.",
+        "mimeType": "application/json"
+      },
+      "syntaro://issues/{issue_id}": {
+        "name": "Issue Fix Status",
+        "description": "Issue details including current fix status, run history, and linked PRs.",
+        "mimeType": "application/json"
+      }
+    }
+  },
+  "command": "python",
+  "args": [
+    "-m",
+    "syntaro_mcp.server",
+    "stdio"
+  ],
+  "env": {
+    "SYNTARO_MCP_SERVER_URL": {
+      "description": "URL of the SYNTARO MCP server",
+      "default": "http://localhost:4095"
+    },
+    "SYNTARO_MCP_PORT": {
+      "description": "Port for the MCP SSE server",
+      "default": "4095"
+    },
+    "MCP_API_KEY": {
+      "description": "API key for authenticating MCP requests",
+      "default": ""
+    }
+  },
+  "transport": {
+    "stdio": {
+      "command": "python",
+      "args": [
+        "-m",
+        "syntaro_mcp.server",
+        "stdio"
+      ],
+      "description": "Stdio transport for tools like OpenCode and Claude Desktop"
+    },
+    "sse": {
+      "url": "https://mcp.syntaro.io/sse",
+      "description": "Hosted Server-Sent Events endpoint (deploy with docs/HOSTING.md); local default is http://localhost:4095/sse"
+    },
+    "streamable-http": {
+      "url": "https://mcp.syntaro.io/mcp",
+      "description": "Hosted streamable HTTP endpoint (MCP POST); local default is http://localhost:4095/mcp"
+    }
+  },
+  "deployment": {
+    "type": "python",
+    "dependencies": [
+      "mcp>=1.0.0",
+      "httpx",
+      "uvicorn",
+      "starlette"
+    ],
+    "installCommand": "pip install -r requirements.txt",
+    "runCommand": "python -m syntaro_mcp.server"
+  }
+}
