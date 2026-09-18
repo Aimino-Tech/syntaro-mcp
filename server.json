@@ -192,12 +192,12 @@
       "description": "Stdio transport for tools like OpenCode and Claude Desktop"
     },
     "sse": {
-      "url": "https://mcp.syntaro.io/sse",
-      "description": "Hosted Server-Sent Events endpoint (deploy with docs/HOSTING.md); local default is http://localhost:4095/sse"
+      "url": "http://localhost:4095/sse",
+      "description": "Server-Sent Events transport for real-time MCP communication. Hosted target https://mcp.syntaro.io/sse goes live with docs/HOSTING.md (pending DNS) \u2014 update this URL after deploy."
     },
     "streamable-http": {
-      "url": "https://mcp.syntaro.io/mcp",
-      "description": "Hosted streamable HTTP endpoint (MCP POST); local default is http://localhost:4095/mcp"
+      "url": "http://localhost:4095/mcp",
+      "description": "Streamable HTTP transport (MCP POST endpoint). Hosted target https://mcp.syntaro.io/mcp goes live with docs/HOSTING.md (pending DNS) \u2014 update this URL after deploy."
     }
   },
   "deployment": {

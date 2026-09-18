@@ -58,7 +58,7 @@ curl https://mcp.syntaro.io/health
 ## Client config (hosted)
 
 ```json
-{ "mcpServers": { "syntaro": {
+{ "mcpServers": { "syntaro": {   <!-- use after DNS is live -->
   "url": "https://mcp.syntaro.io/sse",
   "headers": { "Authorization": "Bearer $MCP_API_KEY" }
 } } }

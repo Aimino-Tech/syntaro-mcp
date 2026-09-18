@@ -5,9 +5,10 @@ an AI bot that investigates a labeled GitHub issue, writes a fix with
 regression tests, and opens a pull request. Any MCP-capable agent
 (OpenCode, Claude Code, Cursor, Codex) can drive it.
 
-- **Hosted endpoint:** `https://mcp.syntaro.io/sse` (SSE) and
-  `https://mcp.syntaro.io/mcp` (streamable HTTP) — see [docs/HOSTING.md](docs/HOSTING.md)
-  for deployment. Until DNS is cut over, run it yourself below.
+- **Hosted endpoint (target, pending deploy):** `https://mcp.syntaro.io/sse` (SSE) and
+  `https://mcp.syntaro.io/mcp` (streamable HTTP) — DNS is not live yet, so run
+  it yourself below or deploy with [docs/HOSTING.md](docs/HOSTING.md), then update
+  `server.json` transports to the live URLs.
 - **npm:** `@aimino/syntaro-mcp` (see [docs/PUBLISHING.md](docs/PUBLISHING.md))
 - **Skills:** [`skills/`](skills/) — `syntaro` (submit→poll loop) plus
   `cavecrew` / `caveman` / `ponytail` (plan-first + verification-tail
@@ -32,8 +33,10 @@ Register with your agent — `bash install.sh --opencode` (also `--claude`,
 `--cursor`, `--codex`), or point a remote client at the hosted endpoint:
 
 ```json
-{ "mcpServers": { "syntaro": { "url": "https://mcp.syntaro.io/sse" } } }
+{ "mcpServers": { "syntaro": { "url": "http://localhost:4095/sse" } } }
 ```
+
+Remote (after deploy): replace the URL with `https://mcp.syntaro.io/sse`.
 
 Full client matrix: [docs/INSTALL.md](docs/INSTALL.md).
 

@@ -58,7 +58,7 @@ Verify: `https://smithery.ai/server/@aimino/syntaro-mcp`.
      "command": "npx", "args": ["-y", "@aimino/syntaro-mcp", "stdio"] } } }
    ```
 
-   and/or remote SSE: `{ "mcpServers": { "syntaro": { "url": "https://mcp.syntaro.io/sse" } } }`.
+   and/or remote SSE once DNS is live: `{ "mcpServers": { "syntaro": { "url": "https://mcp.syntaro.io/sse" } } }`.
 4. Submit, wait for approval, then verify by searching "syntaro".
 
 Full walkthrough with tool table: [glama-listing.md](glama-listing.md).
@@ -77,4 +77,5 @@ Full walkthrough with tool table: [glama-listing.md](glama-listing.md).
 - [ ] MCP registry page resolves `@aimino/syntaro-mcp`
 - [ ] Smithery page shows the new version + deploy green
 - [ ] Glama listing approved (or submitted, with date logged)
-- [ ] `server.json` hosted URLs answer: `curl https://mcp.syntaro.io/health`
+- [ ] `server.json` transports updated to the live hosted URLs, then
+  `curl https://mcp.syntaro.io/health` answers `{"status":"ok"}`

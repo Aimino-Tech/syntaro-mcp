@@ -45,7 +45,7 @@ Use the following values exactly:
 }
 ```
 
-**Option B — Remote SSE endpoint:**
+**Option B — Remote SSE endpoint (only after `mcp.syntaro.io` DNS is live):**
 
 ```json
 {

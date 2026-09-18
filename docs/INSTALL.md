@@ -1,6 +1,9 @@
 # INSTALL — connect an agent to SYNTARO
 
-## Fastest: hosted endpoint (no install)
+## Fastest: hosted endpoint (no install, after DNS is live)
+
+`https://mcp.syntaro.io` DNS is not live yet — until then use the local
+installs below. Once deployed ([docs/HOSTING.md](HOSTING.md)):
 
 ```json
 { "mcpServers": { "syntaro": { "url": "https://mcp.syntaro.io/sse" } } }
